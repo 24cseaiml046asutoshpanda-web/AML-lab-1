@@ -1,6 +1,8 @@
+export type RegressionMode = 'single' | 'multi';
+
 export interface DataPoint {
   id: string;
-  x: string;
+  x: string[]; // SLR will have length 1, MLR will have length equal to numFeatures
   y: string;
 }
 
@@ -12,8 +14,10 @@ export interface RegressionMetrics {
 }
 
 export interface RegressionResponse {
-  slope: number;
+  slope?: number;
+  coefficients?: number[];
   intercept: number;
   predictions: number[];
   metrics: RegressionMetrics;
 }
+

@@ -10,6 +10,10 @@ export function App() {
     loading,
     error,
     regressionResult,
+    regressionMode,
+    setRegressionMode,
+    numFeatures,
+    setNumFeatures,
     handleAddRow,
     handleRemoveRow,
     handleCellChange,
@@ -31,6 +35,10 @@ export function App() {
           <div className="lg:col-span-5 space-y-6">
             <DataInput
               points={points}
+              regressionMode={regressionMode}
+              setRegressionMode={setRegressionMode}
+              numFeatures={numFeatures}
+              setNumFeatures={setNumFeatures}
               onCellChange={handleCellChange}
               onAddRow={handleAddRow}
               onRemoveRow={handleRemoveRow}
@@ -46,6 +54,8 @@ export function App() {
             <RegressionPlot
               chartData={chartData}
               regressionResult={regressionResult}
+              regressionMode={regressionMode}
+              numFeatures={numFeatures}
             />
 
             <MetricsDashboard
@@ -54,13 +64,9 @@ export function App() {
           </div>
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="max-w-7xl mx-auto border-t border-slate-200 mt-16 px-6 py-6 text-center text-xs text-slate-400 font-semibold">
-        <p>RegressLab &copy; {new Date().getFullYear()} — Built with FastAPI, Vite, React & Recharts</p>
-      </footer>
     </div>
   );
 }
 
 export default App;
+

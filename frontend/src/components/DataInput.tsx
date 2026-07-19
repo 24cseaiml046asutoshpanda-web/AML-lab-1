@@ -1,10 +1,14 @@
 import { Play, AlertTriangle } from 'lucide-react';
-import type { DataPoint } from '../types';
+import type { DataPoint, RegressionMode } from '../types';
 import TableEditor from './TableEditor';
 
 interface DataInputProps {
   points: DataPoint[];
-  onCellChange: (id: string, field: 'x' | 'y', value: string) => void;
+  regressionMode: RegressionMode;
+  setRegressionMode: (mode: RegressionMode) => void;
+  numFeatures: number;
+  setNumFeatures: (num: number) => void;
+  onCellChange: (id: string, field: 'x' | 'y', value: string, featureIndex?: number) => void;
   onAddRow: () => void;
   onRemoveRow: (id: string) => void;
   onClearData: () => void;
@@ -15,6 +19,10 @@ interface DataInputProps {
 
 export function DataInput({
   points,
+  regressionMode,
+  setRegressionMode,
+  numFeatures,
+  setNumFeatures,
   onCellChange,
   onAddRow,
   onRemoveRow,
@@ -25,14 +33,75 @@ export function DataInput({
 }: DataInputProps) {
   return (
     <div className="bg-white border border-slate-200/80 rounded-xl shadow-sm overflow-hidden p-5">
+      {/* Mode Settings */}
+      <div className="space-y-4 mb-5 pb-5 border-b border-slate-100">
+        <div>
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">
+            Regression Model Type
+          </span>
+          <div className="grid grid-cols-2 gap-2 bg-slate-100/80 p-1 rounded-lg">
+            <button
+              type="button"
+              onClick={() => setRegressionMode('single')}
+              className={`py-1.5 px-3 rounded-md text-xs font-semibold text-center transition-all cursor-pointer ${
+                regressionMode === 'single'
+                  ? 'bg-white text-blue-600 shadow-sm'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Single Linear
+            </button>
+            <button
+              type="button"
+              onClick={() => setRegressionMode('multi')}
+              className={`py-1.5 px-3 rounded-md text-xs font-semibold text-center transition-all cursor-pointer ${
+                regressionMode === 'multi'
+                  ? 'bg-white text-blue-600 shadow-sm'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Multiple Linear
+            </button>
+          </div>
+        </div>
+
+        {regressionMode === 'multi' && (
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                Number of Features (Xᵢ)
+              </span>
+              <p className="text-[11px] text-slate-500 mt-0.5">Adjust dimensions of input features.</p>
+            </div>
+            <div className="flex bg-slate-100 p-0.5 rounded-md gap-1">
+              {[2, 3, 4, 5].map((num) => (
+                <button
+                  key={num}
+                  type="button"
+                  onClick={() => setNumFeatures(num)}
+                  className={`w-7 h-7 flex items-center justify-center rounded-md text-xs font-bold transition-all cursor-pointer ${
+                    numFeatures === num
+                      ? 'bg-white text-blue-600 shadow-xs'
+                      : 'text-slate-500 hover:text-slate-800'
+                  }`}
+                >
+                  {num}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Title */}
       <div className="mb-4">
         <h2 className="text-sm font-semibold text-slate-900 uppercase tracking-wider">Input Data Points</h2>
-        <p className="text-xs text-slate-500 mt-0.5 font-medium">Enter coordinates for independent (X) and dependent (Y) variables.</p>
       </div>
 
       <TableEditor
         points={points}
+        regressionMode={regressionMode}
+        numFeatures={numFeatures}
         onCellChange={onCellChange}
         onAddRow={onAddRow}
         onRemoveRow={onRemoveRow}
@@ -80,3 +149,4 @@ export function DataInput({
 }
 
 export default DataInput;
+

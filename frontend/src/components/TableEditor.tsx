@@ -1,9 +1,11 @@
 import { Plus, Trash2, RotateCcw } from 'lucide-react';
-import type { DataPoint } from '../types';
+import type { DataPoint, RegressionMode } from '../types';
 
 interface TableEditorProps {
   points: DataPoint[];
-  onCellChange: (id: string, field: 'x' | 'y', value: string) => void;
+  regressionMode: RegressionMode;
+  numFeatures: number;
+  onCellChange: (id: string, field: 'x' | 'y', value: string, featureIndex?: number) => void;
   onAddRow: () => void;
   onRemoveRow: (id: string) => void;
   onClearData: () => void;
@@ -11,6 +13,8 @@ interface TableEditorProps {
 
 export function TableEditor({
   points,
+  regressionMode,
+  numFeatures,
   onCellChange,
   onAddRow,
   onRemoveRow,
@@ -23,7 +27,13 @@ export function TableEditor({
           <thead>
             <tr className="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
               <th className="py-2.5 px-4 text-center w-12">#</th>
-              <th className="py-2.5 px-3">X Value</th>
+              {regressionMode === 'single' ? (
+                <th className="py-2.5 px-3">X Value</th>
+              ) : (
+                Array.from({ length: numFeatures }).map((_, i) => (
+                  <th key={i} className="py-2.5 px-3">X{i + 1} Value</th>
+                ))
+              )}
               <th className="py-2.5 px-3">Y Value</th>
               <th className="py-2.5 px-4 text-center w-12"></th>
             </tr>
@@ -34,15 +44,29 @@ export function TableEditor({
                 <td className="py-2 px-4 text-center text-xs font-medium text-slate-400">
                   {index + 1}
                 </td>
-                <td className="py-1.5 px-2">
-                  <input
-                    type="text"
-                    value={point.x}
-                    onChange={(e) => onCellChange(point.id, 'x', e.target.value)}
-                    placeholder="e.g. 1.0"
-                    className="w-full bg-transparent border-0 focus:ring-1 focus:ring-blue-500/30 rounded px-2.5 py-1 text-sm outline-none font-mono"
-                  />
-                </td>
+                {regressionMode === 'single' ? (
+                  <td className="py-1.5 px-2">
+                    <input
+                      type="text"
+                      value={point.x[0] || ''}
+                      onChange={(e) => onCellChange(point.id, 'x', e.target.value, 0)}
+                      placeholder="e.g. 1.0"
+                      className="w-full bg-transparent border-0 focus:ring-1 focus:ring-blue-500/30 rounded px-2.5 py-1 text-sm outline-none font-mono"
+                    />
+                  </td>
+                ) : (
+                  Array.from({ length: numFeatures }).map((_, i) => (
+                    <td key={i} className="py-1.5 px-2">
+                      <input
+                        type="text"
+                        value={point.x[i] || ''}
+                        onChange={(e) => onCellChange(point.id, 'x', e.target.value, i)}
+                        placeholder="e.g. 1.0"
+                        className="w-full bg-transparent border-0 focus:ring-1 focus:ring-blue-500/30 rounded px-2.5 py-1 text-sm outline-none font-mono"
+                      />
+                    </td>
+                  ))
+                )}
                 <td className="py-1.5 px-2">
                   <input
                     type="text"
@@ -91,3 +115,4 @@ export function TableEditor({
 }
 
 export default TableEditor;
+
