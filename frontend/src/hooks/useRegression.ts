@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { DataPoint, RegressionResponse, RegressionMode } from '../types';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:8000' : '');
 
 export function useRegression() {
   const [regressionMode, setRegressionMode] = useState<RegressionMode>('single');
